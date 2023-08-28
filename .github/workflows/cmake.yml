@@ -30,7 +30,15 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Install
-      run: cmake --install ${{github.workspace}}/build --prefix ${{github.workspace}}/install -v
+      run: |
+        cmake --install ${{github.workspace}}/build --prefix ${{github.workspace}}/install -v
+        cmake -E tar cvzf libsolid3.tar -- ${{github.workspace}}/install
+
+    - name: Update release
+      uses: johnwbyrd/update-release@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: libsolid3.tar
 
     - name: Test
       working-directory: ${{github.workspace}}/build
